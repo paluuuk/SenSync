@@ -1,49 +1,124 @@
 # SenSync
 
-An app that detects sensory overload in individuals with autism and links them with their caregiver to help them better! Solution for Google Developer Solution Challenge 2023.
+Cross-platform Flutter application exploring **sensory-overload prediction for individuals with autism** using wearable/health signals, with caregiver-facing alerts and supporting mobile features.
 
-**NOTE: 
-The individual components: fetching health data in the background from the frontend as well as the model prediction are fully functional separately but are not currently integrated due to an end moment error.
+Built for the **Google Developer Solution Challenge 2023**, the project combines a Flutter mobile application with an ML experimentation pipeline and notification/location capabilities.
 
-## Running the project
+## Product Concept
 
-* In order to run all functionalities of the application and run the application on a physical iPhone device, the project needs to be run using Xcode on a MacBook.
+SenSync is designed around a simple workflow:
 
-1. Install Flutter version 3.7.6 on your macbook device (uses Dart 2.19.3).
+```text
+Wearable / Health Signals
+          ↓
+Data Extraction
+          ↓
+Feature Processing
+          ↓
+Random Forest Model
+          ↓
+Sensory-Overload Prediction
+          ↓
+Mobile App / Caregiver Alert
+```
 
-2. Install Xcode version 14.2 IDE on your macbook device.
+The goal is to identify patterns associated with sensory overload and surface useful information to the user or caregiver through the mobile application.
 
-3. Enable developer mode on your iphone and resart your debugging device.
+## Engineering Highlights
 
-4. Open the project in Visual Studio Code IDE.
+### Cross-platform mobile application
 
-5. Run command "flutter clean" in the project directory.
+The application is implemented with **Flutter / Dart** and includes native iOS and Android project targets.
 
-6. Run command "flutter pub get" in the project directory.
+The repository contains:
 
-7. Go to "ios" folder inside the project directory, right click, and select "Open in Xcode" option. 
+- reusable Flutter UI components
+- application screens and navigation
+- Firebase configuration
+- location functionality
+- notification services
+- background-processing experimentation for health-data collection
 
-![image](https://user-images.githubusercontent.com/84574733/229269569-236725ce-e934-4c2f-aeaf-ede191abeef6.png)
+### ML experimentation
 
-8. Connect your iPhone to your MacBook using a USB or USB-c cable (data transfer cable).
+The repository includes notebooks covering:
 
-9. Select your iPhone as the debbuging device on Xcode.
+- data extraction
+- model development
+- deployment experimentation
 
-![image](https://user-images.githubusercontent.com/84574733/229269592-7fdd9f2a-3b1e-4915-8a7f-45938689a763.png)
+A serialized **Random Forest model** is also included in the current repository. The ML work uses wearable/physiological signals to explore sensory-overload prediction.
 
-10. Click on "run" button in Xcode (build will not run if installing the app for the first time on your phone).
+### Notifications and location
 
-11. Go to iPhone Settings, Go to VPN and Device Management and Trust apps from developer "Apple development {appleid} {unique code}".
+The Flutter application contains a dedicated notification service and location functionality, supporting the broader caregiver-alert workflow envisioned for the product.
 
-12. Click on "run" button in xcode again.
+## Repository Structure
 
-The application runs!!
+```text
+SenSync/
+├── lib/
+│   ├── screens/               # Application screens
+│   ├── reusable_widgets/      # Shared UI components
+│   ├── widgets/               # App widgets
+│   ├── Services/
+│   │   └── notifications.dart
+│   ├── main.dart
+│   ├── firebase_options.dart
+│   ├── get_location.dart
+│   ├── Data Extraction.ipynb
+│   ├── Modeling.ipynb
+│   ├── Deployment.ipynb
+│   └── rf_model.pkl
+├── android/
+├── ios/
+├── test/
+├── pubspec.yaml
+└── README.md
+```
 
-* The app runs code in the background to fetch user health data and pass it to the server.
-* To check the background processing code on development mode, go to Xcode menu, select "Debug" and click on "Simulate Background Fetch".
+## Tech Stack
 
-Enjoy!
+**Mobile**  
+Flutter · Dart · iOS · Android
 
-** NOTE: In case the build fails, try running "flutter clean" in the project directory.Then delete "Pods" folder and "Podfile.lock" file inside the ios directory. Then on the terminal run the following commands in sequence: "cd ios", "pod install" and "pod update". Try reopening the ios folder in Xcode and follow from step 8 onwards.
+**Backend / Platform**  
+Firebase · notifications · location services
 
+**Machine Learning**  
+Python experimentation · Random Forest · wearable / physiological signal analysis
 
+## Running the Mobile App
+
+The project was developed with Flutter 3.7.6 / Dart 2.19.3 and was tested on iOS using Xcode 14.2.
+
+```bash
+flutter clean
+flutter pub get
+flutter run
+```
+
+For physical iOS-device testing, open the `ios` project in Xcode, configure code signing, select the connected device, and run the application.
+
+## Current Integration Status
+
+The mobile-side health-data collection workflow and the ML prediction workflow were developed and validated as separate components, but the original project did **not complete the end-to-end integration between those components**.
+
+The repository is therefore best viewed as a functional mobile prototype plus an ML proof of concept rather than a production-ready medical system.
+
+## What I Would Improve Next
+
+From a software-engineering perspective, the next iteration would:
+
+1. move the ML notebooks into a dedicated `ml/` or `notebooks/` directory;
+2. expose model inference through a clean service/API boundary rather than storing the model inside `lib/`;
+3. remove generated Flutter/build artifacts from version control;
+4. add automated Flutter tests and CI;
+5. formalize the data contract between mobile health-data ingestion and model inference;
+6. add model evaluation, monitoring, and explicit privacy controls before any real-world health deployment.
+
+## Project Context
+
+SenSync was created as a student solution for the **Google Developer Solution Challenge 2023**. It explores how mobile engineering and machine learning can be combined to support people who experience sensory overload and their caregivers.
+
+> **Important:** This is an experimental student project and not a clinically validated diagnostic or medical device.
