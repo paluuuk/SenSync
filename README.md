@@ -1,124 +1,58 @@
 # SenSync
 
-Cross-platform Flutter application exploring **sensory-overload prediction for individuals with autism** using wearable/health signals, with caregiver-facing alerts and supporting mobile features.
+A Flutter prototype for caregiver support, developed for the Google Developer Solution Challenge 2023, alongside an offline wearable-stress classification experiment.
 
-Built for the **Google Developer Solution Challenge 2023**, the project combines a Flutter mobile application with an ML experimentation pipeline and notification/location capabilities.
+The intended product explores support for people who experience sensory overload. The implemented ML target is **WESAD stress classification**; it is not a clinically validated sensory-overload detector.
 
-## Product Concept
+## Components and status
 
-SenSync is designed around a simple workflow:
+| Component | Implementation | Status |
+| --- | --- | --- |
+| Mobile client | Flutter/Dart screens, Firebase authentication, health-data access, location, and local notifications | Prototype |
+| Offline data preparation | WESAD wrist-signal extraction, sampling alignment, and feature construction | Notebook experiment |
+| Classifier | scikit-learn Random Forest using EDA, temperature, and heart-rate features | Offline model experiment |
+| Deployment exploration | Firebase Admin, storage, and model-serialization notebook | Separate experiment |
+| Mobile-to-inference integration | Background health collection connected to model predictions | Incomplete |
 
-```text
-Wearable / Health Signals
-          ↓
-Data Extraction
-          ↓
-Feature Processing
-          ↓
-Random Forest Model
-          ↓
-Sensory-Overload Prediction
-          ↓
-Mobile App / Caregiver Alert
-```
+## ML workflow
 
-The goal is to identify patterns associated with sensory overload and surface useful information to the user or caregiver through the mobile application.
+The [modeling notebook](lib/Modeling.ipynb) reads WESAD participant files and wrist-device exports, aligns physiological signals, maps label 2 to stress and other labels to the comparison class, and downsamples the assembled records.
 
-## Engineering Highlights
+It uses a stratified 75/25 row split, resamples the training stress class, fits a Random Forest, and inspects accuracy, precision, recall, and a confusion matrix.
 
-### Cross-platform mobile application
+That row-based split mixes records from the participant pool. It does not establish performance on unseen people; subject-held-out evaluation and temporal leakage checks would be needed before making that claim. WESAD stress labels are a research proxy, not a clinical diagnosis.
 
-The application is implemented with **Flutter / Dart** and includes native iOS and Android project targets.
+## Repository map
 
-The repository contains:
+- [`lib/screens/`](lib/screens): application screens and navigation.
+- [`lib/reusable_widgets/`](lib/reusable_widgets): shared interface components.
+- [`lib/Services/notifications.dart`](lib/Services/notifications.dart): local notification service.
+- [Data extraction](lib/Data%20Extraction.ipynb), [modeling](lib/Modeling.ipynb), and [deployment](lib/Deployment.ipynb): separate Python experiments.
+- [`pubspec.yaml`](pubspec.yaml): mobile dependencies.
+- [`ml-requirements.txt`](ml-requirements.txt): packages imported by the Python notebooks.
 
-- reusable Flutter UI components
-- application screens and navigation
-- Firebase configuration
-- location functionality
-- notification services
-- background-processing experimentation for health-data collection
+## Running the mobile prototype
 
-### ML experimentation
-
-The repository includes notebooks covering:
-
-- data extraction
-- model development
-- deployment experimentation
-
-A serialized **Random Forest model** is also included in the current repository. The ML work uses wearable/physiological signals to explore sensory-overload prediction.
-
-### Notifications and location
-
-The Flutter application contains a dedicated notification service and location functionality, supporting the broader caregiver-alert workflow envisioned for the product.
-
-## Repository Structure
-
-```text
-SenSync/
-├── lib/
-│   ├── screens/               # Application screens
-│   ├── reusable_widgets/      # Shared UI components
-│   ├── widgets/               # App widgets
-│   ├── Services/
-│   │   └── notifications.dart
-│   ├── main.dart
-│   ├── firebase_options.dart
-│   ├── get_location.dart
-│   ├── Data Extraction.ipynb
-│   ├── Modeling.ipynb
-│   ├── Deployment.ipynb
-│   └── rf_model.pkl
-├── android/
-├── ios/
-├── test/
-├── pubspec.yaml
-└── README.md
-```
-
-## Tech Stack
-
-**Mobile**  
-Flutter · Dart · iOS · Android
-
-**Backend / Platform**  
-Firebase · notifications · location services
-
-**Machine Learning**  
-Python experimentation · Random Forest · wearable / physiological signal analysis
-
-## Running the Mobile App
-
-The project was developed with Flutter 3.7.6 / Dart 2.19.3 and was tested on iOS using Xcode 14.2.
+The original environment used Flutter 3.7.6 / Dart 2.19.3, with Xcode 14.2 for iOS. The Dart SDK constraint is recorded in `pubspec.yaml`.
 
 ```bash
-flutter clean
+git clone https://github.com/paluuuk/SenSync.git
+cd SenSync
 flutter pub get
 flutter run
 ```
 
-For physical iOS-device testing, open the `ios` project in Xcode, configure code signing, select the connected device, and run the application.
+Use a compatible mobile SDK, your own Firebase project configuration, the relevant platform permissions, and iOS code signing for physical-device testing. A successful build alone does not complete the missing inference integration.
 
-## Current Integration Status
+## Running the ML experiments
 
-The mobile-side health-data collection workflow and the ML prediction workflow were developed and validated as separate components, but the original project did **not complete the end-to-end integration between those components**.
+```bash
+python -m venv .venv
+# Activate .venv using the command for your shell.
+python -m pip install -r ml-requirements.txt
+jupyter notebook
+```
 
-The repository is therefore best viewed as a functional mobile prototype plus an ML proof of concept rather than a production-ready medical system.
+The notebooks expect WESAD data under their configured `data/WESAD/` paths. Dataset downloads, cloud configuration, and external service access must be supplied separately. Dependencies are listed without claiming a newly validated training environment.
 
-## What I Would Improve Next
-
-From a software-engineering perspective, the next iteration would:
-
-1. move the ML notebooks into a dedicated `ml/` or `notebooks/` directory;
-2. expose model inference through a clean service/API boundary rather than storing the model inside `lib/`;
-3. remove generated Flutter/build artifacts from version control;
-4. add automated Flutter tests and CI;
-5. formalize the data contract between mobile health-data ingestion and model inference;
-6. add model evaluation, monitoring, and explicit privacy controls before any real-world health deployment.
-
-## Project Context
-
-SenSync was created as a student solution for the **Google Developer Solution Challenge 2023**. It explores how mobile engineering and machine learning can be combined to support people who experience sensory overload and their caregivers.
-
-> **Important:** This is an experimental student project and not a clinically validated diagnostic or medical device.
+**Stack:** Flutter, Dart, Firebase, Python, pandas, NumPy, scikit-learn.

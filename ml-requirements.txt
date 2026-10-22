@@ -1,0 +1,8 @@
+numpy
+pandas
+matplotlib
+scikit-learn
+tqdm
+firebase-admin
+joblib
+jupyter
