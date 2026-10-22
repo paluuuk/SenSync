@@ -56,3 +56,11 @@ jupyter notebook
 The notebooks expect WESAD data under their configured `data/WESAD/` paths. Dataset downloads, cloud configuration, and external service access must be supplied separately. Dependencies are listed without claiming a newly validated training environment.
 
 **Stack:** Flutter, Dart, Firebase, Python, pandas, NumPy, scikit-learn.
+
+## Related engineering projects
+
+- [Beehive mobile product](https://github.com/paluuuk/beehive)
+- [Exoskeleton terrain perception](https://github.com/paluuuk/Vision-based-Terrain-Recognition-for-Lower-Limb-Exoskeletons)
+
+[View all selected engineering work](https://github.com/paluuuk)
+
